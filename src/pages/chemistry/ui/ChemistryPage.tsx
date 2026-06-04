@@ -38,6 +38,14 @@ export function ChemistryPage({ onNavigate }: ChemistryPageProps) {
             Kimyo <span className="font-normal text-slate-400">/ Chemistry</span>
           </span>
         </button>
+
+        <button
+          onClick={() => onNavigate("/lab/chemistry/3d")}
+          className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-3.5 py-1.5 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 transition hover:from-blue-700 hover:to-blue-800"
+        >
+          <Icon name="flask" className="h-4 w-4" />
+          Interaktiv laboratoriya
+        </button>
       </div>
 
       <div className="flex min-h-0 flex-1">

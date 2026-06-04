@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import type { Molecule } from "../../../entities/molecule";
-import { formatFormula, labelizeCategory } from "../../../entities/molecule";
+import { formatFormula, labelizeCategory, moleculeNameUz } from "../../../entities/molecule";
 import { getElement } from "../../../entities/element";
 import { Icon } from "../../../shared/ui/icon";
 
@@ -39,7 +39,7 @@ export function MoleculeInfoPanel({ molecule }: { molecule: Molecule }) {
       </div>
 
       <h1 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">
-        {molecule.name}
+        {moleculeNameUz(molecule)}
       </h1>
       <p className="text-2xl font-light text-blue-600">{formatFormula(molecule.formula)}</p>
       {molecule.iupacName && molecule.iupacName !== molecule.name.toLowerCase() && (

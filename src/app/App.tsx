@@ -4,9 +4,15 @@ import { LandingPage } from "../pages/landing";
 import { LabDirectionsPage } from "../pages/lab";
 import { ChemistryPage } from "../pages/chemistry";
 import { ComingSoonPage } from "../pages/coming-soon";
+import { ChemistryLab } from "../pages/chemistry-lab";
 
 export default function App() {
   const [route, navigate] = useHashRoute();
+
+  // Interactive 3D bench: pour substances into a vessel and watch reactions.
+  if (route === "/lab/chemistry/3d") {
+    return <ChemistryLab onNavigate={navigate} />;
+  }
 
   // Live chemistry explorer — full-screen, its own layout.
   if (route === "/lab/chemistry") {

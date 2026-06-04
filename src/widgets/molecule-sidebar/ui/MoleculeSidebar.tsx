@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import type { Molecule } from "../../../entities/molecule";
-import { formatFormula, labelizeCategory } from "../../../entities/molecule";
+import { formatFormula, labelizeCategory, moleculeNameUz } from "../../../entities/molecule";
 import { Icon } from "../../../shared/ui/icon";
 
 interface MoleculeSidebarProps {
@@ -24,6 +24,7 @@ export function MoleculeSidebar({
     const matches = q
       ? molecules.filter(
           (m) =>
+            moleculeNameUz(m).toLowerCase().includes(q) ||
             m.name.toLowerCase().includes(q) ||
             m.formula.toLowerCase().includes(q) ||
             m.iupacName.toLowerCase().includes(q),
@@ -91,7 +92,7 @@ export function MoleculeSidebar({
                           : "text-slate-600 hover:bg-slate-100"
                       }`}
                     >
-                      <span className="truncate">{m.name}</span>
+                      <span className="truncate">{moleculeNameUz(m)}</span>
                       <span className="shrink-0 text-xs text-slate-400">
                         {formatFormula(m.formula)}
                       </span>
