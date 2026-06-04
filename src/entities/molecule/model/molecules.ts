@@ -3,7 +3,7 @@
 // Re-generate with: npm run data:build
 // 240 molecules, generated from the catalog in scripts/catalog.mjs.
 
-import type { Molecule } from "../types/molecule";
+import type { Molecule } from "./types";
 
 export const molecules: Molecule[] = [
   {

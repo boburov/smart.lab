@@ -1,4 +1,4 @@
-import type { Element } from "../types/molecule";
+import type { Element } from "./types";
 
 /**
  * Periodic-table reference data for elements that appear in the compound

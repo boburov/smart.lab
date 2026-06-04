@@ -1,5 +1,5 @@
-import type { Atom, Bond, Molecule } from "../types/molecule";
-import { getElement } from "./elements";
+import type { Atom, Bond, Molecule } from "../model/types";
+import { getElement } from "../../element";
 
 /**
  * Framework-agnostic geometry/render helpers for the molecule data.
