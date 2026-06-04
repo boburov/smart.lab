@@ -9,3 +9,4 @@ vite.config.ts.timestamp-*
 # Cached raw PubChem JSON is regenerable via `npm run data:build`.
 # Keep it out of version control by default; remove this line to commit the cache.
 data/raw/
+/.claude
