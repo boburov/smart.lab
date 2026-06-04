@@ -28,7 +28,8 @@ const PUG = "https://pubchem.ncbi.nlm.nih.gov/rest/pug";
 const ELEMENT_SYMBOLS = {
   1: "H", 2: "He", 3: "Li", 4: "Be", 5: "B", 6: "C", 7: "N", 8: "O", 9: "F",
   10: "Ne", 11: "Na", 12: "Mg", 13: "Al", 14: "Si", 15: "P", 16: "S", 17: "Cl",
-  18: "Ar", 19: "K", 20: "Ca", 26: "Fe", 29: "Cu", 30: "Zn", 35: "Br", 53: "I",
+  18: "Ar", 19: "K", 20: "Ca", 25: "Mn", 26: "Fe", 27: "Co", 29: "Cu", 30: "Zn",
+  35: "Br", 53: "I",
 };
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -164,11 +165,15 @@ function validate(mol) {
   for (const [i, b] of mol.bonds.entries()) {
     if (b.a < 0 || b.a >= n || b.b < 0 || b.b >= n) issues.push(`bond ${i} references out-of-range atom`);
     if (b.a === b.b) issues.push(`bond ${i} connects an atom to itself`);
-    if (b.order < 1 || b.order > 4) issues.push(`bond ${i} has unusual order ${b.order}`);
+    // PubChem bond orders: 1-4 covalent, 5 dative, 6 complex, 7 ionic. Anything
+    // outside 1-7 is genuinely unexpected.
+    if (b.order < 1 || b.order > 7) issues.push(`bond ${i} has unexpected order ${b.order}`);
   }
   if (mol.dimensions === "3d") {
+    // Small molecules (CO2, ozone, formaldehyde...) are inherently planar, so a
+    // z = 0 plane is fine. Only flag larger structures that are suspiciously flat.
     const flat = mol.atoms.every((a) => a.z === 0);
-    if (n > 2 && flat) issues.push("marked 3D but all z = 0 (likely flat)");
+    if (n >= 5 && flat) issues.push("marked 3D but all z = 0 (likely flat)");
   }
   if (mol.atoms.some((a) => a.symbol === "?")) issues.push("contains an unmapped element");
   return issues;

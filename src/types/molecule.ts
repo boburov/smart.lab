@@ -24,7 +24,11 @@ export interface Bond {
   a: number;
   /** Index of the second atom in `Molecule.atoms`. */
   b: number;
-  /** Bond order: 1 = single, 2 = double, 3 = triple, 4 = aromatic/quadruple. */
+  /**
+   * PubChem bond order: 1 = single, 2 = double, 3 = triple, 4 = quadruple,
+   * 5 = dative, 6 = complex, 7 = ionic. Ionic "bonds" (order 7) appear in salts
+   * like NaCl/KOH — a renderer may draw them as dashed lines or omit them.
+   */
   order: number;
 }
 

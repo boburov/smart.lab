@@ -1,14 +1,31 @@
 {
-  "name": "chem-sim-data",
+  "name": "smartlab",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "PubChem chemical compound data (3D structures) prepared as TypeScript for a 3D molecule simulator",
+  "description": "SmartLab — interactive 3D molecule explorer built on PubChem data (React + Tailwind + React Three Fiber).",
   "scripts": {
-    "data:build": "node scripts/build-data.mjs",
-    "typecheck": "tsc --noEmit"
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "data:build": "node scripts/build-data.mjs"
   },
   "devDependencies": {
-    "typescript": "^5.5.0"
+    "@tailwindcss/vite": "^4.3.0",
+    "@types/react": "^19.2.16",
+    "@types/react-dom": "^19.2.3",
+    "@types/three": "^0.184.1",
+    "@vitejs/plugin-react": "^6.0.2",
+    "tailwindcss": "^4.3.0",
+    "typescript": "^5.5.0",
+    "vite": "^8.0.16"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "three": "^0.184.0"
   }
 }
