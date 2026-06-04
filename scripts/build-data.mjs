@@ -6,7 +6,7 @@
  *      disk in data/raw/ so re-runs don't re-hit the network).
  *   2. Fetch name / formula / weight for all CIDs in one batched request.
  *   3. Parse each record into { atoms, bonds }, re-center on the centroid.
- *   4. Emit src/data/molecules.ts with the full typed dataset.
+ *   4. Emit src/entities/molecule/model/molecules.ts with the full typed dataset.
  *
  * Usage: node scripts/build-data.mjs   (or: npm run data:build)
  */
@@ -22,7 +22,7 @@ const execFileAsync = promisify(execFile);
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
 const RAW_DIR = join(ROOT, "data", "raw");
-const OUT_FILE = join(ROOT, "src", "data", "molecules.ts");
+const OUT_FILE = join(ROOT, "src", "entities", "molecule", "model", "molecules.ts");
 
 const PUG = "https://pubchem.ncbi.nlm.nih.gov/rest/pug";
 const ELEMENT_SYMBOLS = {
@@ -251,7 +251,7 @@ async function main() {
 // Re-generate with: npm run data:build
 // ${molecules.length} molecules, generated from the catalog in scripts/catalog.mjs.
 
-import type { Molecule } from "../types/molecule";
+import type { Molecule } from "./types";
 
 export const molecules: Molecule[] = [
 `;

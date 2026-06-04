@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 /**
  * Minimal hash-based router so SmartLab can have multiple pages
- * (landing → laboratory → explorer) without pulling in a routing library.
+ * (landing -> laboratory -> explorer) without pulling in a routing library.
  *
  * Routes are plain strings like "/", "/lab", "/lab/chemistry".
  */

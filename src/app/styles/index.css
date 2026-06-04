@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
-/* SmartLab — white & green theme.
-   Light surfaces, emerald brand accents, dark slate text. */
+/* SmartLab — white & blue theme.
+   Light surfaces, blue brand accents + gradients, dark slate text. */
 @theme {
-  --color-lab-bg: #f3faf6;
+  --color-lab-bg: #f5f8fc;
   --color-lab-panel: #ffffff;
-  --color-lab-border: #d8ede1;
-  --color-lab-soft: #ecfdf5;
-  --color-brand: #059669;
-  --color-brand-strong: #047857;
+  --color-lab-border: #dbe6f3;
+  --color-lab-soft: #eff5ff;
+  --color-brand: #2563eb;
+  --color-brand-strong: #1d4ed8;
 }
 
 html,
@@ -25,19 +25,19 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Slim, green-tinted scrollbars for the panels. */
+/* Slim, blue-tinted scrollbars for the panels. */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #a7f3d0 transparent;
+  scrollbar-color: #bfdbfe transparent;
 }
 *::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 *::-webkit-scrollbar-thumb {
-  background-color: #a7f3d0;
+  background-color: #bfdbfe;
   border-radius: 9999px;
 }
 *::-webkit-scrollbar-thumb:hover {
-  background-color: #6ee7b7;
+  background-color: #93c5fd;
 }

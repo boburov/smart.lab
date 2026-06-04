@@ -22,20 +22,38 @@ npm run typecheck  # tsc --noEmit
 npm run data:build # re-download/regenerate the chemistry dataset (see below)
 ```
 
-### App layout
+### App layout — Feature-Sliced Design (FSD)
+
+The UI follows **FSD**: dependencies only point downward
+(`app → pages → widgets → entities → shared`). Each slice exposes a public API
+through its `index.ts`.
 
 ```
-index.html              # Vite entry
-vite.config.ts          # React + Tailwind v4 plugins
+index.html                         # Vite entry
+vite.config.ts                     # React + Tailwind v4 plugins
 src/
-  main.tsx              # React root
-  App.tsx               # 3-pane layout (sidebar · viewer · info)
-  index.css             # Tailwind v4 + theme tokens
-  components/
-    Sidebar.tsx         # search + category-grouped molecule list
-    MoleculeViewer.tsx  # React Three Fiber ball-and-stick renderer
-    InfoPanel.tsx       # formula, weight, atom/bond counts, element legend
-  lib/format.tsx        # formula subscripts + category labels
+  main.tsx                         # React root
+  app/
+    App.tsx                        # hash-route composition (landing/lab/chemistry)
+    styles/index.css               # Tailwind v4 + white/blue theme tokens
+  pages/
+    landing/                       # main menu / hero
+    lab/                           # 3D Laboratory: choose a direction
+    chemistry/                     # live molecule explorer (3-pane)
+    coming-soon/                   # placeholder for physics / electronics
+  widgets/
+    navbar/                        # shared top navigation
+    molecule-sidebar/              # search + category-grouped list
+    molecule-viewer/               # React Three Fiber ball-and-stick renderer
+    molecule-info/                 # formula, weight, counts, element legend
+  entities/
+    molecule/{model,lib}           # types, generated dataset, format + geometry
+    element/model                  # periodic-table reference (colors + radii)
+    direction/model                # the three science directions + sections
+  shared/
+    ui/{brand-mark,icon}           # logo + line-icon set (no emoji)
+    lib/router                     # minimal hash router
+  index.ts                         # library barrel (re-exports the dataset)
 ```
 
 The 3D viewer reads atoms/bonds straight from the dataset below: spheres are
@@ -91,12 +109,16 @@ so every molecule sits at the origin.
 
 ```
 src/
-  index.ts              # barrel export — import everything from here
-  types/molecule.ts     # Atom, Bond, Molecule, Element interfaces
-  data/
-    molecules.ts        # AUTO-GENERATED dataset (do not edit by hand)
-    elements.ts         # periodic-table reference (colors + radii)
-    helpers.ts          # geometry/render helpers (bounding box, colors, ...)
+  index.ts                                  # barrel export — import everything from here
+  entities/
+    molecule/
+      model/types.ts                        # Atom, Bond, Molecule interfaces
+      model/molecules.ts                    # AUTO-GENERATED dataset (do not edit by hand)
+      lib/geometry.ts                        # geometry/render helpers (bounding box, colors, ...)
+      lib/format.tsx                         # formula subscripts + category labels
+    element/
+      model/types.ts                        # Element interface
+      model/elements.ts                      # periodic-table reference (colors + radii)
 scripts/
   catalog.mjs           # the list of PubChem CIDs to download (edit this)
   build-data.mjs        # downloader + TypeScript generator

@@ -9,16 +9,14 @@
  */
 
 // Types
-export type { Atom, Bond, Molecule, Element } from "./types/molecule";
+export type { Atom, Bond, Molecule } from "./entities/molecule";
+export type { Element } from "./entities/element";
 
-// Molecule dataset (generated from PubChem)
-export { molecules, moleculesByCid, moleculesByName } from "./data/molecules";
-
-// Periodic-table reference data
-export { elements, unknownElement, getElement } from "./data/elements";
-
-// Render/geometry helpers
+// Molecule dataset (generated from PubChem) + render/geometry helpers
 export {
+  molecules,
+  moleculesByCid,
+  moleculesByName,
   atomColor,
   atomRadius,
   bondLength,
@@ -26,4 +24,7 @@ export {
   boundingRadius,
   listCategories,
   moleculesInCategory,
-} from "./data/helpers";
+} from "./entities/molecule";
+
+// Periodic-table reference data
+export { elements, unknownElement, getElement } from "./entities/element";
