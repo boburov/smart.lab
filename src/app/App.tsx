@@ -5,6 +5,7 @@ import { LabDirectionsPage } from "../pages/lab";
 import { ChemistryPage } from "../pages/chemistry";
 import { ComingSoonPage } from "../pages/coming-soon";
 import { ChemistryLab } from "../pages/chemistry-lab";
+import { ElectronicsPage } from "../pages/electronics";
 
 export default function App() {
   const [route, navigate] = useHashRoute();
@@ -26,13 +27,7 @@ export default function App() {
     );
   }
   if (route === "/lab/electronics") {
-    return (
-      <ComingSoonPage
-        direction={directionsById.electronics}
-        route={route}
-        onNavigate={navigate}
-      />
-    );
+    return <ElectronicsPage route={route} onNavigate={navigate} />;
   }
 
   // The 3D laboratory: choose a direction.

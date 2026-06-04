@@ -2,7 +2,8 @@ import { useMemo, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Bounds, Html } from "@react-three/drei";
 import * as THREE from "three";
-import type { Atom, Molecule } from "../../../entities/molecule";
+import type { Atom, Molecule, AggregateState } from "../../../entities/molecule";
+import { boundingRadius, moleculeState, STATE_LABELS_UZ } from "../../../entities/molecule";
 import { getElement } from "../../../entities/element";
 import { Icon } from "../../../shared/ui/icon";
 
@@ -120,13 +121,43 @@ function AtomMesh({ atom, showLabel }: { atom: Atom; showLabel: boolean }) {
   );
 }
 
-function MoleculeModel({ molecule, showLabels }: { molecule: Molecule; showLabels: boolean }) {
+function MoleculeModel({
+  molecule,
+  showLabels,
+  interactive = true,
+  segments = 32,
+}: {
+  molecule: Molecule;
+  showLabels: boolean;
+  /** Bitta molekula ko'rinishida atomlar hover/label'ga javob beradi. */
+  interactive?: boolean;
+  /** Sfera silliqligi — ko'p-nusxali rejimda ravonlik uchun kamaytiriladi. */
+  segments?: number;
+}) {
   const bonds = useMemo(() => buildBonds(molecule), [molecule]);
   return (
     <group>
-      {molecule.atoms.map((atom, i) => (
-        <AtomMesh key={i} atom={atom} showLabel={showLabels} />
-      ))}
+      {interactive
+        ? molecule.atoms.map((atom, i) => (
+            <AtomMesh key={i} atom={atom} showLabel={showLabels} />
+          ))
+        : molecule.atoms.map((atom, i) => {
+            const el = getElement(atom.element);
+            return (
+              <mesh key={i} position={[atom.x, atom.y, atom.z]}>
+                <sphereGeometry
+                  args={[el.vanDerWaalsRadius * ATOM_SCALE, segments, segments]}
+                />
+                <meshStandardMaterial
+                  color={el.color}
+                  roughness={0.35}
+                  metalness={0.15}
+                  emissive={el.color}
+                  emissiveIntensity={0.08}
+                />
+              </mesh>
+            );
+          })}
       {bonds.map((c, i) => (
         <BondMesh key={i} {...c} />
       ))}
@@ -157,9 +188,107 @@ function ToggleButton({
   );
 }
 
+/** Ko'rinish rejimi: bitta molekula yoki uchta agregat holatdan biri. */
+type ViewMode = "single" | AggregateState;
+
+interface Instance {
+  position: [number, number, number];
+  rotation: [number, number, number];
+}
+
+/** Kichik, urug'lantirilgan PRNG — bir xil molekula har safar bir xil joylashuvni beradi. */
+function mulberry32(seed: number) {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/**
+ * Agregat holatni ko'rsatuvchi molekula nusxalarining joylashuvini hisoblaydi:
+ *  - qattiq: tartibli, zich panjara (burilishsiz);
+ *  - suyuq: zich, lekin silkitilgan panjara + tasodifiy burilish;
+ *  - gaz: siyrak, erkin tarqoq.
+ * Nusxalar soni molekula kattaligiga qarab cheklanadi (render ravonligi uchun).
+ */
+function buildInstances(state: AggregateState, mol: Molecule): Instance[] {
+  const d = Math.max(boundingRadius(mol), 0.8) * 2;
+  const atoms = Math.max(mol.atoms.length, 1);
+  const rand = mulberry32((mol.cid >>> 0) || 1);
+  const out: Instance[] = [];
+
+  if (state === "gas") {
+    const spread = d * 3.2;
+    const n = Math.max(4, Math.min(9, Math.floor(1500 / atoms)));
+    for (let i = 0; i < n; i++) {
+      out.push({
+        position: [
+          (rand() * 2 - 1) * spread,
+          (rand() * 2 - 1) * spread,
+          (rand() * 2 - 1) * spread,
+        ],
+        rotation: [rand() * Math.PI * 2, rand() * Math.PI * 2, rand() * Math.PI * 2],
+      });
+    }
+    return out;
+  }
+
+  // qattiq va suyuq — kubik panjara; kattaligiga qarab 3×3×3, 2×2×2 yoki 1.
+  const side = atoms * 27 <= 1500 ? 3 : atoms * 8 <= 1500 ? 2 : 1;
+  const coords: number[] = [];
+  for (let i = 0; i < side; i++) coords.push(i - (side - 1) / 2);
+
+  const gap = state === "solid" ? d * 1.12 : d * 1.3;
+  const jitter = state === "solid" ? 0 : d * 0.26;
+
+  for (const x of coords)
+    for (const y of coords)
+      for (const z of coords) {
+        out.push({
+          position: [
+            x * gap + (rand() * 2 - 1) * jitter,
+            y * gap + (rand() * 2 - 1) * jitter,
+            z * gap + (rand() * 2 - 1) * jitter,
+          ],
+          rotation:
+            state === "solid"
+              ? [0, 0, 0]
+              : [rand() * Math.PI * 2, rand() * Math.PI * 2, rand() * Math.PI * 2],
+        });
+      }
+  return out;
+}
+
+/** Tanlangan agregat holatdagi molekula nusxalarini sahnaga joylashtiradi. */
+function StateField({ state, molecule }: { state: AggregateState; molecule: Molecule }) {
+  const instances = useMemo(() => buildInstances(state, molecule), [state, molecule]);
+  return (
+    <group>
+      {instances.map((inst, i) => (
+        <group key={i} position={inst.position} rotation={inst.rotation}>
+          <MoleculeModel molecule={molecule} showLabels={false} interactive={false} segments={16} />
+        </group>
+      ))}
+    </group>
+  );
+}
+
+const VIEW_MODES: { id: ViewMode; label: string }[] = [
+  { id: "single", label: "Molekula" },
+  { id: "solid", label: STATE_LABELS_UZ.solid },
+  { id: "liquid", label: STATE_LABELS_UZ.liquid },
+  { id: "gas", label: STATE_LABELS_UZ.gas },
+];
+
 export function MoleculeViewer({ molecule }: { molecule: Molecule }) {
   const [autoRotate, setAutoRotate] = useState(true);
   const [showLabels, setShowLabels] = useState(false);
+  const [mode, setMode] = useState<ViewMode>("single");
+
+  const naturalState = moleculeState(molecule);
 
   return (
     <div className="relative h-full w-full">
@@ -169,9 +298,13 @@ export function MoleculeViewer({ molecule }: { molecule: Molecule }) {
         <hemisphereLight intensity={0.6} groundColor="#dbe6f3" color="#ffffff" />
         <directionalLight position={[6, 8, 6]} intensity={1.2} />
         <directionalLight position={[-6, -4, -6]} intensity={0.4} />
-        {/* Re-fit the camera whenever the molecule changes (keyed remount). */}
-        <Bounds key={molecule.cid} fit clip observe margin={1.3}>
-          <MoleculeModel molecule={molecule} showLabels={showLabels} />
+        {/* Molekula yoki rejim o'zgarganda kamerani qayta moslash (keyli remount). */}
+        <Bounds key={`${molecule.cid}-${mode}`} fit clip observe margin={1.3}>
+          {mode === "single" ? (
+            <MoleculeModel molecule={molecule} showLabels={showLabels} />
+          ) : (
+            <StateField state={mode} molecule={molecule} />
+          )}
         </Bounds>
         <OrbitControls
           makeDefault
@@ -181,18 +314,60 @@ export function MoleculeViewer({ molecule }: { molecule: Molecule }) {
         />
       </Canvas>
 
-      <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between p-4">
-        <div className="pointer-events-auto flex gap-2">
-          <ToggleButton active={autoRotate} onClick={() => setAutoRotate((v) => !v)}>
-            <Icon name="rotate" className="h-3.5 w-3.5" />
-            Aylantirish
-          </ToggleButton>
-          <ToggleButton active={showLabels} onClick={() => setShowLabels((v) => !v)}>
-            Belgilar
-          </ToggleButton>
+      <div className="pointer-events-none absolute inset-x-0 top-0 flex flex-col gap-2 p-4">
+        <div className="flex items-start justify-between gap-2">
+          {/* Agregat holat rejimini tanlash */}
+          <div className="pointer-events-auto inline-flex rounded-xl bg-white/80 p-1 ring-1 ring-slate-200 backdrop-blur">
+            {VIEW_MODES.map((m) => {
+              const active = mode === m.id;
+              const natural = m.id !== "single" && m.id === naturalState;
+              return (
+                <button
+                  key={m.id}
+                  onClick={() => setMode(m.id)}
+                  title={natural ? "Xona haroratidagi tabiiy holat" : undefined}
+                  className={`relative rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+                    active
+                      ? "bg-blue-600 text-white"
+                      : "text-slate-600 hover:bg-slate-100"
+                  }`}
+                >
+                  {m.label}
+                  {natural && (
+                    <span
+                      className={`absolute right-1 top-1 h-1.5 w-1.5 rounded-full ${
+                        active ? "bg-white" : "bg-blue-500"
+                      }`}
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="pointer-events-none hidden rounded-lg bg-white/80 px-3 py-1.5 text-xs text-slate-500 ring-1 ring-slate-200 backdrop-blur sm:block">
+            suring · kattalashtiring · o'ng tugma bilan suring
+          </div>
         </div>
-        <div className="pointer-events-none rounded-lg bg-white/80 px-3 py-1.5 text-xs text-slate-500 ring-1 ring-slate-200 backdrop-blur">
-          suring · kattalashtiring · o'ng tugma bilan suring
+
+        <div className="flex items-center gap-2">
+          <div className="pointer-events-auto flex gap-2">
+            <ToggleButton active={autoRotate} onClick={() => setAutoRotate((v) => !v)}>
+              <Icon name="rotate" className="h-3.5 w-3.5" />
+              Aylantirish
+            </ToggleButton>
+            {mode === "single" && (
+              <ToggleButton active={showLabels} onClick={() => setShowLabels((v) => !v)}>
+                Belgilar
+              </ToggleButton>
+            )}
+          </div>
+          <span className="pointer-events-none rounded-lg bg-white/80 px-2.5 py-1.5 text-xs text-slate-500 ring-1 ring-slate-200 backdrop-blur">
+            Xona haroratida:{" "}
+            <span className="font-semibold text-blue-700">
+              {STATE_LABELS_UZ[naturalState]}
+            </span>
+          </span>
         </div>
       </div>
     </div>

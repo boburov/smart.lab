@@ -55,11 +55,11 @@ export const directions: LabDirection[] = [
     id: "electronics",
     name: "Elektronika",
     nameEn: "Electronics",
-    tagline: "Sxemalarni yig'ing va signallarni real vaqtda kuzating.",
-    status: "soon",
+    tagline: "Arduino platalari, sensorlar va modullar to'plamini ko'ring.",
+    status: "active",
     route: "/lab/electronics",
     icon: "chip",
-    sections: ["Sxemalar", "Mantiqiy elementlar", "Mikrokontrollerlar", "Sensorlar"],
+    sections: ["Platalar", "Sensorlar", "Modullar", "Komponentlar"],
   },
 ];
 
