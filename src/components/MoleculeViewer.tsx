@@ -109,7 +109,7 @@ function AtomMesh({ atom, showLabel }: { atom: Atom; showLabel: boolean }) {
       </mesh>
       {(hovered || showLabel) && (
         <Html center distanceFactor={9} className="pointer-events-none select-none">
-          <span className="whitespace-nowrap rounded bg-slate-900/80 px-1.5 py-0.5 text-xs font-semibold text-slate-100 ring-1 ring-white/10">
+          <span className="whitespace-nowrap rounded bg-white/90 px-1.5 py-0.5 text-xs font-semibold text-slate-800 shadow-sm ring-1 ring-slate-200">
             {el.symbol}
             {hovered && <span className="font-normal text-slate-400"> · {el.name}</span>}
           </span>
@@ -147,8 +147,8 @@ function ToggleButton({
       onClick={onClick}
       className={`rounded-md px-3 py-1.5 text-xs font-medium ring-1 backdrop-blur transition ${
         active
-          ? "bg-emerald-500/20 text-emerald-300 ring-emerald-500/40"
-          : "bg-slate-900/60 text-slate-300 ring-white/10 hover:bg-slate-800/70"
+          ? "bg-emerald-600 text-white ring-emerald-600"
+          : "bg-white/80 text-slate-600 ring-slate-200 hover:bg-white"
       }`}
     >
       {children}
@@ -163,11 +163,11 @@ export default function MoleculeViewer({ molecule }: { molecule: Molecule }) {
   return (
     <div className="relative h-full w-full">
       <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 12], fov: 45 }}>
-        <color attach="background" args={["#0b0f17"]} />
-        <ambientLight intensity={0.55} />
-        <hemisphereLight intensity={0.4} groundColor="#0b0f17" />
-        <directionalLight position={[6, 8, 6]} intensity={1.1} />
-        <directionalLight position={[-6, -4, -6]} intensity={0.35} />
+        <color attach="background" args={["#f3faf6"]} />
+        <ambientLight intensity={0.75} />
+        <hemisphereLight intensity={0.6} groundColor="#d8ede1" color="#ffffff" />
+        <directionalLight position={[6, 8, 6]} intensity={1.2} />
+        <directionalLight position={[-6, -4, -6]} intensity={0.4} />
         {/* Re-fit the camera whenever the molecule changes (keyed remount). */}
         <Bounds key={molecule.cid} fit clip observe margin={1.3}>
           <MoleculeModel molecule={molecule} showLabels={showLabels} />
@@ -183,14 +183,14 @@ export default function MoleculeViewer({ molecule }: { molecule: Molecule }) {
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between p-4">
         <div className="pointer-events-auto flex gap-2">
           <ToggleButton active={autoRotate} onClick={() => setAutoRotate((v) => !v)}>
-            ⟳ Rotate
+            ⟳ Aylantirish
           </ToggleButton>
           <ToggleButton active={showLabels} onClick={() => setShowLabels((v) => !v)}>
-            Labels
+            Belgilar
           </ToggleButton>
         </div>
-        <div className="pointer-events-none rounded-md bg-slate-900/60 px-3 py-1.5 text-xs text-slate-400 ring-1 ring-white/10 backdrop-blur">
-          drag · scroll · right-drag
+        <div className="pointer-events-none rounded-md bg-white/80 px-3 py-1.5 text-xs text-slate-500 ring-1 ring-slate-200 backdrop-blur">
+          suring · kattalashtiring · o'ng tugma bilan suring
         </div>
       </div>
     </div>
