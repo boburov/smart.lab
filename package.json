@@ -1,0 +1,14 @@
+{
+  "name": "chem-sim-data",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "PubChem chemical compound data (3D structures) prepared as TypeScript for a 3D molecule simulator",
+  "scripts": {
+    "data:build": "node scripts/build-data.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
+  }
+}
