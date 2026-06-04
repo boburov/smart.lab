@@ -5,6 +5,7 @@
 export type IconName =
   | "flask"
   | "atom"
+  | "dna"
   | "chip"
   | "database"
   | "pointer"
@@ -30,6 +31,14 @@ const PATHS: Record<IconName, React.ReactNode> = {
       <ellipse cx="12" cy="12" rx="9" ry="3.6" />
       <ellipse cx="12" cy="12" rx="9" ry="3.6" transform="rotate(60 12 12)" />
       <ellipse cx="12" cy="12" rx="9" ry="3.6" transform="rotate(120 12 12)" />
+    </>
+  ),
+  dna: (
+    <>
+      <path d="M7 3c0 4.5 10 4.5 10 9s-10 4.5-10 9" />
+      <path d="M17 3c0 4.5-10 4.5-10 9s10 4.5 10 9" />
+      <path d="M9 7h6" />
+      <path d="M9 17h6" />
     </>
   ),
   chip: (

@@ -5,7 +5,8 @@ import { LabDirectionsPage } from "../pages/lab";
 import { ChemistryPage } from "../pages/chemistry";
 import { ComingSoonPage } from "../pages/coming-soon";
 import { ChemistryLab } from "../pages/chemistry-lab";
-import { ElectronicsPage } from "../pages/electronics";
+import { ElectronicsLabPage } from "../pages/electronics-lab";
+import { BiologyPage } from "../pages/biology";
 
 export default function App() {
   const [route, navigate] = useHashRoute();
@@ -26,8 +27,11 @@ export default function App() {
       <ComingSoonPage direction={directionsById.physics} route={route} onNavigate={navigate} />
     );
   }
+  if (route === "/lab/biology") {
+    return <BiologyPage onNavigate={navigate} />;
+  }
   if (route === "/lab/electronics") {
-    return <ElectronicsPage route={route} onNavigate={navigate} />;
+    return <ElectronicsLabPage onNavigate={navigate} />;
   }
 
   // The 3D laboratory: choose a direction.

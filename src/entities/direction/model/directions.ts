@@ -2,12 +2,12 @@ import { molecules, labelizeCategory } from "../../molecule";
 import type { IconName } from "../../../shared/ui/icon";
 
 /**
- * The three science "directions" (yo'nalishlar) offered inside the
- * 3D Laboratory. Chemistry is live and backed by the molecule dataset;
- * Physics and Electronics are planned ("tez kunda").
+ * The science "directions" (yo'nalishlar) offered inside the 3D Laboratory.
+ * Chemistry is live (molecule dataset) and Electronics is live (circuit lab);
+ * Physics and Biology are planned ("tez kunda").
  */
 export interface LabDirection {
-  id: "chemistry" | "physics" | "electronics";
+  id: "chemistry" | "physics" | "electronics" | "biology";
   /** Uzbek display name shown in the UI. */
   name: string;
   /** English name, shown as a small caption. */
@@ -50,6 +50,16 @@ export const directions: LabDirection[] = [
     route: "/lab/physics",
     icon: "atom",
     sections: ["Mexanika", "Optika", "Elektromagnetizm", "Termodinamika", "To'lqinlar"],
+  },
+  {
+    id: "biology",
+    name: "Biologiya",
+    nameEn: "Biology",
+    tagline: "O'simlik eking va o'sish jarayonini tezlashtirib kuzating.",
+    status: "active",
+    route: "/lab/biology",
+    icon: "dna",
+    sections: ["O'simliklar", "Zoologiya", "Anatomiya"],
   },
   {
     id: "electronics",

@@ -1,0 +1,506 @@
+[
+  {
+    "id": "apple",
+    "name_uz": "Olma",
+    "name_lat": "Malus domestica",
+    "type": "tree",
+    "germination_days": 30,
+    "growth_stages": {
+      "seed": 0,
+      "sprout": 30,
+      "sapling": 365,
+      "mature": 1825,
+      "fruiting": 2190
+    },
+    "total_maturation_days": 2190,
+    "is_fruiting": true,
+    "fruiting_season": "autumn",
+    "max_height_meters": 5.0,
+    "lifespan_years": 50,
+    "description": "Eng keng tarqalgan mevali daraxtlardan biri. Turli iqlimlarga moslashuvchan.",
+    "visual_assets": {
+      "leaf_type": "broad",
+      "flower_color": "white-pink"
+    }
+  },
+  {
+    "id": "apricot",
+    "name_uz": "O'rik",
+    "name_lat": "Prunus armeniaca",
+    "type": "tree",
+    "germination_days": 45,
+    "growth_stages": {
+      "seed": 0,
+      "sprout": 45,
+      "sapling": 365,
+      "mature": 1460,
+      "fruiting": 1825
+    },
+    "total_maturation_days": 1825,
+    "is_fruiting": true,
+    "fruiting_season": "summer",
+    "max_height_meters": 6.0,
+    "lifespan_years": 40,
+    "description": "Markaziy Osiyoda juda mashhur, erta gullaydigan mevali daraxt.",
+    "visual_assets": {
+      "leaf_type": "broad",
+      "flower_color": "white"
+    }
+  },
+  {
+    "id": "walnut",
+    "name_uz": "Yong'oq",
+    "name_lat": "Juglans regia",
+    "type": "tree",
+    "germination_days": 60,
+    "growth_stages": {
+      "seed": 0,
+      "sprout": 60,
+      "sapling": 730,
+      "mature": 3650,
+      "fruiting": 4380
+    },
+    "total_maturation_days": 4380,
+    "is_fruiting": true,
+    "fruiting_season": "autumn",
+    "max_height_meters": 25.0,
+    "lifespan_years": 200,
+    "description": "Uzoq umr ko'ruvchi va katta soya beruvchi foydali daraxt.",
+    "visual_assets": {
+      "leaf_type": "pinnate",
+      "flower_color": "green"
+    }
+  },
+  {
+    "id": "pomegranate",
+    "name_uz": "Anor",
+    "name_lat": "Punica granatum",
+    "type": "shrub/tree",
+    "germination_days": 40,
+    "growth_stages": {
+      "seed": 0,
+      "sprout": 40,
+      "sapling": 365,
+      "mature": 1095,
+      "fruiting": 1460
+    },
+    "total_maturation_days": 1460,
+    "is_fruiting": true,
+    "fruiting_season": "autumn",
+    "max_height_meters": 4.0,
+    "lifespan_years": 60,
+    "description": "Issiqsevar, shifobaxsh mevali o'simlik.",
+    "visual_assets": {
+      "leaf_type": "small-oblong",
+      "flower_color": "red"
+    }
+  },
+  {
+    "id": "cherry",
+    "name_uz": "Gilos",
+    "name_lat": "Prunus avium",
+    "type": "tree",
+    "germination_days": 90,
+    "growth_stages": {
+      "seed": 0,
+      "sprout": 90,
+      "sapling": 365,
+      "mature": 1460,
+      "fruiting": 1825
+    },
+    "total_maturation_days": 1825,
+    "is_fruiting": true,
+    "fruiting_season": "summer",
+    "max_height_meters": 10.0,
+    "lifespan_years": 30,
+    "description": "Shirin va sershira meva beruvchi daraxt.",
+    "visual_assets": {
+      "leaf_type": "broad",
+      "flower_color": "white"
+    }
+  },
+  {
+    "id": "poplar",
+    "name_uz": "Terak",
+    "name_lat": "Populus",
+    "type": "tree",
+    "germination_days": 14,
+    "growth_stages": {
+      "seed": 0,
+      "sprout": 14,
+      "sapling": 180,
+      "mature": 1825,
+      "fruiting": 0
+    },
+    "total_maturation_days": 1825,
+    "is_fruiting": false,
+    "fruiting_season": "none",
+    "max_height_meters": 30.0,
+    "lifespan_years": 50,
+    "description": "Tez o'suvchi, asosan qurilish materiali uchun ekiladigan daraxt.",
+    "visual_assets": {
+      "leaf_type": "deltoid",
+      "flower_color": "none"
+    }
+  },
+  {
+    "id": "wheat",
+    "name_uz": "Bug'doy",
+    "name_lat": "Triticum",
+    "type": "cereal",
+    "germination_days": 7,
+    "growth_stages": {
+      "seed": 0,
+      "sprout": 7,
+      "tillering": 30,
+      "heading": 90,
+      "mature": 120
+    },
+    "total_maturation_days": 120,
+    "is_fruiting": true,
+    "fruiting_season": "summer",
+    "max_height_meters": 1.0,
+    "lifespan_years": 1,
+    "description": "Asosiy oziq-ovqat ekini.",
+    "visual_assets": {
+      "leaf_type": "grass",
+      "flower_color": "green/yellow"
+    }
+  },
+  {
+    "id": "cotton",
+    "name_uz": "Paxta",
+    "name_lat": "Gossypium",
+    "type": "shrub",
+    "germination_days": 10,
+    "growth_stages": {
+      "seed": 0,
+      "sprout": 10,
+      "flowering": 60,
+      "boll_opening": 120,
+      "mature": 150
+    },
+    "total_maturation_days": 150,
+    "is_fruiting": true,
+    "fruiting_season": "autumn",
+    "max_height_meters": 1.5,
+    "lifespan_years": 1,
+    "description": "O'zbekistonning asosiy texnik ekini, 'oq oltin'.",
+    "visual_assets": {
+      "leaf_type": "lobed",
+      "flower_color": "yellow/pink"
+    }
+  },
+  {
+    "id": "tomato",
+    "name_uz": "Pomidor",
+    "name_lat": "Solanum lycopersicum",
+    "type": "vegetable",
+    "germination_days": 7,
+    "growth_stages": {
+      "seed": 0,
+      "sprout": 7,
+      "flowering": 45,
+      "fruiting": 70,
+      "mature": 90
+    },
+    "total_maturation_days": 90,
+    "is_fruiting": true,
+    "fruiting_season": "summer",
+    "max_height_meters": 2.0,
+    "lifespan_years": 1,
+    "description": "Dunyo bo'ylab eng ko'p iste'mol qilinadigan sabzavotlardan biri.",
+    "visual_assets": {
+      "leaf_type": "serrated",
+      "flower_color": "yellow"
+    }
+  },
+  {
+    "id": "lemon",
+    "name_uz": "Limon",
+    "name_lat": "Citrus limon",
+    "type": "tree",
+    "germination_days": 21,
+    "growth_stages": {
+      "seed": 0,
+      "sprout": 21,
+      "sapling": 365,
+      "mature": 1095,
+      "fruiting": 1460
+    },
+    "total_maturation_days": 1460,
+    "is_fruiting": true,
+    "fruiting_season": "all-year",
+    "max_height_meters": 4.0,
+    "lifespan_years": 50,
+    "description": "S vitamini boy, doimiy yashil subtropik daraxt.",
+    "visual_assets": {
+      "leaf_type": "ovate",
+      "flower_color": "white"
+    }
+  },
+  {
+    "id": "pine",
+    "name_uz": "Qarag'ay",
+    "name_lat": "Pinus",
+    "type": "tree",
+    "germination_days": 30,
+    "growth_stages": {
+      "seed": 0,
+      "sprout": 30,
+      "sapling": 730,
+      "mature": 3650,
+      "fruiting": 5475
+    },
+    "total_maturation_days": 5475,
+    "is_fruiting": true,
+    "fruiting_season": "autumn",
+    "max_height_meters": 40.0,
+    "lifespan_years": 300,
+    "description": "Igna bargli, doimiy yashil daraxt. Havoni tozalashda juda foydali.",
+    "visual_assets": {
+      "leaf_type": "needle",
+      "flower_color": "none"
+    }
+  },
+  {
+    "id": "grape",
+    "name_uz": "Uzum",
+    "name_lat": "Vitis vinifera",
+    "type": "vine",
+    "germination_days": 30,
+    "growth_stages": {
+      "seed": 0,
+      "sprout": 30,
+      "sapling": 365,
+      "mature": 730,
+      "fruiting": 1095
+    },
+    "total_maturation_days": 1095,
+    "is_fruiting": true,
+    "fruiting_season": "summer/autumn",
+    "max_height_meters": 10.0,
+    "lifespan_years": 80,
+    "description": "Chirmashib o'suvchi serhosil o'simlik.",
+    "visual_assets": {
+      "leaf_type": "palmately-lobed",
+      "flower_color": "greenish"
+    }
+  },
+  {
+    "id": "sunflower",
+    "name_uz": "Kungaboqar",
+    "name_lat": "Helianthus annuus",
+    "type": "flower",
+    "germination_days": 10,
+    "growth_stages": {
+      "seed": 0,
+      "sprout": 10,
+      "vegetative": 40,
+      "flowering": 70,
+      "mature": 100
+    },
+    "total_maturation_days": 100,
+    "is_fruiting": true,
+    "fruiting_season": "autumn",
+    "max_height_meters": 3.0,
+    "lifespan_years": 1,
+    "description": "Moy olinadigan va manzarali o'simlik.",
+    "visual_assets": {
+      "leaf_type": "heart-shaped",
+      "flower_color": "yellow"
+    }
+  },
+  {
+    "id": "fig",
+    "name_uz": "Anjir",
+    "name_lat": "Ficus carica",
+    "type": "tree/shrub",
+    "germination_days": 25,
+    "growth_stages": {
+      "seed": 0,
+      "sprout": 25,
+      "sapling": 365,
+      "mature": 1095,
+      "fruiting": 1460
+    },
+    "total_maturation_days": 1460,
+    "is_fruiting": true,
+    "fruiting_season": "summer",
+    "max_height_meters": 7.0,
+    "lifespan_years": 70,
+    "description": "Shirin va parhezbop meva beruvchi qadimiy daraxt.",
+    "visual_assets": {
+      "leaf_type": "palmately-lobed",
+      "flower_color": "none-internal"
+    }
+  },
+  {
+    "id": "mulberry",
+    "name_uz": "Tut",
+    "name_lat": "Morus",
+    "type": "tree",
+    "germination_days": 20,
+    "growth_stages": {
+      "seed": 0,
+      "sprout": 20,
+      "sapling": 365,
+      "mature": 1095,
+      "fruiting": 1460
+    },
+    "total_maturation_days": 1460,
+    "is_fruiting": true,
+    "fruiting_season": "spring/summer",
+    "max_height_meters": 15.0,
+    "lifespan_years": 100,
+    "description": "Ipak qurti boqish va meva olish uchun ekiladigan chidamli daraxt.",
+    "visual_assets": {
+      "leaf_type": "ovate/lobed",
+      "flower_color": "green"
+    }
+  },
+  {
+    "id": "peach",
+    "name_uz": "Shaftoli",
+    "name_lat": "Prunus persica",
+    "type": "tree",
+    "germination_days": 60,
+    "growth_stages": {
+      "seed": 0,
+      "sprout": 60,
+      "sapling": 365,
+      "mature": 1095,
+      "fruiting": 1460
+    },
+    "total_maturation_days": 1460,
+    "is_fruiting": true,
+    "fruiting_season": "summer",
+    "max_height_meters": 5.0,
+    "lifespan_years": 25,
+    "description": "Mazali va sershira meva beruvchi, mo'tadil iqlimni sevuvchi daraxt.",
+    "visual_assets": {
+      "leaf_type": "lanceolate",
+      "flower_color": "pink"
+    }
+  },
+  {
+    "id": "almond",
+    "name_uz": "Bodom",
+    "name_lat": "Prunus dulcis",
+    "type": "tree",
+    "germination_days": 50,
+    "growth_stages": {
+      "seed": 0,
+      "sprout": 50,
+      "sapling": 365,
+      "mature": 1460,
+      "fruiting": 1825
+    },
+    "total_maturation_days": 1825,
+    "is_fruiting": true,
+    "fruiting_season": "spring",
+    "max_height_meters": 8.0,
+    "lifespan_years": 60,
+    "description": "Erta gullaydigan, sovuqqa chidamli mevali daraxt.",
+    "visual_assets": {
+      "leaf_type": "lanceolate",
+      "flower_color": "white-pink"
+    }
+  },
+  {
+    "id": "rose",
+    "name_uz": "Atirgul",
+    "name_lat": "Rosa",
+    "type": "shrub",
+    "germination_days": 40,
+    "growth_stages": {
+      "seed": 0,
+      "sprout": 40,
+      "sapling": 120,
+      "flowering": 200,
+      "mature": 365
+    },
+    "total_maturation_days": 365,
+    "is_fruiting": false,
+    "fruiting_season": "summer",
+    "max_height_meters": 2.0,
+    "lifespan_years": 15,
+    "description": "Eng mashhur manzarali gul turi.",
+    "visual_assets": {
+      "leaf_type": "pinnate-serrated",
+      "flower_color": "various"
+    }
+  },
+  {
+    "id": "cucumber",
+    "name_uz": "Bodring",
+    "name_lat": "Cucumis sativus",
+    "type": "vegetable",
+    "germination_days": 5,
+    "growth_stages": {
+      "seed": 0,
+      "sprout": 5,
+      "flowering": 40,
+      "fruiting": 55,
+      "mature": 70
+    },
+    "total_maturation_days": 70,
+    "is_fruiting": true,
+    "fruiting_season": "summer",
+    "max_height_meters": 2.5,
+    "lifespan_years": 1,
+    "description": "Tez o'suvchi va serhosil sabzavot.",
+    "visual_assets": {
+      "leaf_type": "lobed/rough",
+      "flower_color": "yellow"
+    }
+  },
+  {
+    "id": "potato",
+    "name_uz": "Kartoshka",
+    "name_lat": "Solanum tuberosum",
+    "type": "vegetable/tuber",
+    "germination_days": 15,
+    "growth_stages": {
+      "seed": 0,
+      "sprout": 15,
+      "vegetative": 40,
+      "flowering": 70,
+      "mature": 110
+    },
+    "total_maturation_days": 110,
+    "is_fruiting": true,
+    "fruiting_season": "autumn",
+    "max_height_meters": 0.8,
+    "lifespan_years": 1,
+    "description": "Dunyo xalqlarining ikkinchi noni.",
+    "visual_assets": {
+      "leaf_type": "pinnate",
+      "flower_color": "white/purple"
+    }
+  },
+  {
+    "id": "rice",
+    "name_uz": "Guruch",
+    "name_lat": "Oryza sativa",
+    "type": "cereal",
+    "germination_days": 5,
+    "growth_stages": {
+      "seed": 0,
+      "sprout": 5,
+      "tillering": 40,
+      "heading": 100,
+      "mature": 140
+    },
+    "total_maturation_days": 140,
+    "is_fruiting": true,
+    "fruiting_season": "autumn",
+    "max_height_meters": 1.2,
+    "lifespan_years": 1,
+    "description": "Suvda o'suvchi eng muhim donli ekin.",
+    "visual_assets": {
+      "leaf_type": "grass",
+      "flower_color": "green"
+    }
+  }
+]

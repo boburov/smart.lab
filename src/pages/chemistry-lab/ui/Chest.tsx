@@ -10,6 +10,27 @@ interface ChestProps {
   onPick: (substance: Substance) => void;
 }
 
+/** A small flask glyph filled with the substance's own colour. */
+function Vial({ color }: { color: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className="h-7 w-7 shrink-0" aria-hidden="true">
+      <path
+        d="M9.2 12.5 h5.6 l2 4.2 a1.7 1.7 0 0 1 -1.5 2.5 H8.7 a1.7 1.7 0 0 1 -1.5 -2.5 z"
+        fill={color}
+        fillOpacity="0.92"
+      />
+      <path
+        d="M10 3.5 v4.2 L5.9 16.4 A1.8 1.8 0 0 0 7.5 19.2 h9 A1.8 1.8 0 0 0 18.1 16.4 L14 7.7 V3.5"
+        fill="none"
+        stroke="#94a3b8"
+        strokeWidth="1.2"
+        strokeLinejoin="round"
+      />
+      <path d="M9 3.5 h6" stroke="#94a3b8" strokeWidth="1.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function SubstanceButton({
   substance,
   onPick,
@@ -23,10 +44,7 @@ function SubstanceButton({
       title={`${substance.name} (${substance.formula})`}
       className="group flex items-center gap-2.5 rounded-xl border border-[var(--color-lab-border)] bg-white px-2.5 py-2 text-left transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-sm"
     >
-      <span
-        className="h-7 w-7 shrink-0 rounded-lg ring-1 ring-black/10"
-        style={{ backgroundColor: substance.color }}
-      />
+      <Vial color={substance.color} />
       <span className="min-w-0">
         <span className="block truncate text-sm font-medium text-slate-800">
           {substance.name}
