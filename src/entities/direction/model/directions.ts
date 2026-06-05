@@ -55,11 +55,11 @@ export const directions: LabDirection[] = [
     id: "biology",
     name: "Biologiya",
     nameEn: "Biology",
-    tagline: "O'simlik eking va o'sish jarayonini tezlashtirib kuzating.",
+    tagline: "Inson tanasini qatlam-qatlam — skelet, a'zolar, tomirlar — 3D da o'rganing.",
     status: "active",
     route: "/lab/biology",
     icon: "dna",
-    sections: ["O'simliklar", "Zoologiya", "Anatomiya"],
+    sections: ["Anatomiya", "Skelet", "Ichki a'zolar", "Tomirlar", "O'simliklar"],
   },
   {
     id: "electronics",

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { PhysicalState, Substance } from "../../../entities/substance";
 import {
   findProduct,
@@ -72,8 +72,16 @@ export interface BenchState {
   reactionSeq: number;
   /** The reaction that just fired (explosion, flash, …), or null. */
   reactionEffect: ReactionEffect | null;
+  /** Whether the burner under the vessel is on. */
+  heating: boolean;
+  /** Liquid temperature 0 (cool) … 1 (boiling). */
+  temperature: number;
+  /** True once more than the vessel can hold has been poured (it overflows). */
+  overfilled: boolean;
   /** Pour one unit of a substance into the vessel. */
   add: (substance: Substance) => void;
+  /** Turn the burner on/off. */
+  toggleHeat: () => void;
   /** Remove the most recently poured substance. */
   undo: () => void;
   /** Empty the vessel. */
@@ -110,9 +118,31 @@ export function useBench(): BenchState {
     seq: 0,
     effect: null,
   });
+  const [heating, setHeating] = useState(false);
+  const [temperature, setTemperature] = useState(0);
   // Guards so only the latest async resolution wins and reactions don't repeat.
   const reqRef = useRef(0);
   const lastStatusRef = useRef<LabStatus | null>(null);
+  const heatingRef = useRef(false);
+
+  const toggleHeat = useCallback(() => {
+    setHeating((on) => {
+      heatingRef.current = !on;
+      return !on;
+    });
+  }, []);
+
+  // Temperature eases toward boiling while the burner is on, and cools when off.
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setTemperature((t) => {
+        const target = heatingRef.current ? 1 : 0;
+        const next = t + (target - t) * 0.05;
+        return Math.abs(next - target) < 0.004 ? target : next;
+      });
+    }, 80);
+    return () => window.clearInterval(id);
+  }, []);
 
   const add = useCallback(
     (substance: Substance) => {
@@ -184,6 +214,7 @@ export function useBench(): BenchState {
   }, [poured, product]);
 
   const fill = Math.min(poured.length / CAPACITY, 1);
+  const overfilled = poured.length > CAPACITY;
 
   return {
     poured,
@@ -197,7 +228,11 @@ export function useBench(): BenchState {
     pourState: pour.state,
     reactionSeq: reaction.seq,
     reactionEffect: reaction.effect,
+    heating,
+    temperature,
+    overfilled,
     add,
+    toggleHeat,
     undo,
     clear,
   };

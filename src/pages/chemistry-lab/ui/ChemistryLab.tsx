@@ -2,12 +2,42 @@ import { useEffect, useState } from "react";
 import { useBench } from "../../../features/lab-bench";
 import { formatFormula, moleculeNameUz } from "../../../entities/molecule";
 import type { ReactionEffect, ReactionKind } from "../../../entities/reaction";
+import { elements, categoryColor, type PeriodicElement } from "../../../entities/element";
+import type { Ion } from "../../../entities/ion";
+import type { Substance } from "../../../entities/substance";
 import { playSound } from "../../../shared/lib/sound";
 import { BrandMark } from "../../../shared/ui/brand-mark";
 import { LabScene } from "./LabScene";
 import { Chest } from "./Chest";
 import { Toolbar } from "./Toolbar";
 import { Journal } from "./Journal";
+import { PeriodicTable } from "./PeriodicTable";
+
+/** Turn a periodic-table element into a pourable substance (true CPK colour if known). */
+function elementToSubstance(el: PeriodicElement): Substance {
+  return {
+    id: `el-${el.symbol}`,
+    kind: "element",
+    name: el.name,
+    formula: el.symbol,
+    color: elements[el.number]?.color ?? categoryColor[el.category],
+    composition: { [el.symbol]: 1 },
+    state: el.state,
+  };
+}
+
+/** Turn an ion into a pourable substance (dissolved → liquid). */
+function ionToSubstance(ion: Ion): Substance {
+  return {
+    id: `ion-${ion.id}`,
+    kind: "compound",
+    name: ion.name,
+    formula: ion.formula,
+    color: ion.color,
+    composition: ion.composition,
+    state: "suyuq",
+  };
+}
 
 /** Banner colour scheme per reaction kind. */
 const REACTION_STYLES: Record<ReactionKind, string> = {
@@ -45,6 +75,8 @@ export function ChemistryLab({ onNavigate }: ChemistryLabProps) {
     );
   }, [bench.pourSeq]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const [showTable, setShowTable] = useState(false);
+
   // Show the reaction headline + play its sound each time a new reaction fires.
   const [reactionFlash, setReactionFlash] = useState<ReactionEffect | null>(null);
   useEffect(() => {
@@ -68,6 +100,9 @@ export function ChemistryLab({ onNavigate }: ChemistryLabProps) {
           pourState={bench.pourState}
           reactionSeq={bench.reactionSeq}
           reactionKind={bench.reactionEffect?.kind ?? null}
+          heating={bench.heating}
+          temperature={bench.temperature}
+          overfilled={bench.overfilled}
         />
       </div>
 
@@ -101,7 +136,13 @@ export function ChemistryLab({ onNavigate }: ChemistryLabProps) {
           Kimyo laboratoriyasi
         </span>
 
-        <div className="ml-auto hidden items-center gap-2 sm:flex">
+        <button
+          onClick={() => setShowTable(true)}
+          className="ml-auto rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-3.5 py-1.5 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 transition hover:from-blue-700 hover:to-blue-800"
+        >
+          Davriy jadval
+        </button>
+        <div className="hidden items-center gap-2 lg:flex">
           {HINTS.map((h) => (
             <span
               key={h}
@@ -132,9 +173,33 @@ export function ChemistryLab({ onNavigate }: ChemistryLabProps) {
         </div>
       )}
 
+      {/* Overflow warning */}
+      {bench.overfilled && (
+        <div className="pointer-events-none absolute inset-x-0 top-[6.5rem] z-20 flex justify-center">
+          <div className="rounded-full border border-amber-300 bg-amber-50/95 px-4 py-1.5 text-sm font-medium text-amber-700 shadow-sm backdrop-blur">
+            Idish to'ldi — suyuqlik toshib ketdi
+          </div>
+        </div>
+      )}
+
       <Journal history={bench.history} />
       <Chest onPick={bench.add} />
-      <Toolbar poured={bench.poured} onUndo={bench.undo} onClear={bench.clear} />
+      <Toolbar
+        poured={bench.poured}
+        onUndo={bench.undo}
+        onClear={bench.clear}
+        heating={bench.heating}
+        temperature={bench.temperature}
+        onToggleHeat={bench.toggleHeat}
+      />
+
+      {showTable && (
+        <PeriodicTable
+          onClose={() => setShowTable(false)}
+          onPick={(el) => bench.add(elementToSubstance(el))}
+          onPickIon={(ion) => bench.add(ionToSubstance(ion))}
+        />
+      )}
     </div>
   );
 }

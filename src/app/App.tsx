@@ -7,6 +7,7 @@ import { ComingSoonPage } from "../pages/coming-soon";
 import { ChemistryLab } from "../pages/chemistry-lab";
 import { ElectronicsLabPage } from "../pages/electronics-lab";
 import { BiologyPage } from "../pages/biology";
+import { AnatomyPage } from "../pages/anatomy";
 
 export default function App() {
   const [route, navigate] = useHashRoute();
@@ -27,8 +28,12 @@ export default function App() {
       <ComingSoonPage direction={directionsById.physics} route={route} onNavigate={navigate} />
     );
   }
-  if (route === "/lab/biology") {
+  // Biology: anatomy explorer is primary; the plant garden lives at /garden.
+  if (route === "/lab/biology/garden") {
     return <BiologyPage onNavigate={navigate} />;
+  }
+  if (route === "/lab/biology") {
+    return <AnatomyPage onNavigate={navigate} />;
   }
   if (route === "/lab/electronics") {
     return <ElectronicsLabPage onNavigate={navigate} />;

@@ -15,6 +15,8 @@ const BEAKER_HEIGHT = 2.0;
 const INNER_RADIUS = 0.6;
 const MAX_LIQUID_HEIGHT = 1.72;
 const LIQUID_BOTTOM = 0.05;
+/** How high the tripod lifts the beaker so the burner fits underneath. */
+const STAND_H = 0.4;
 
 interface LabSceneProps {
   liquidColor: string;
@@ -24,6 +26,12 @@ interface LabSceneProps {
   pourState: PhysicalState;
   reactionSeq: number;
   reactionKind: ReactionKind | null;
+  /** Burner under the vessel is on. */
+  heating: boolean;
+  /** Liquid temperature 0 (cool) … 1 (boiling). */
+  temperature: number;
+  /** Liquid is overflowing the rim. */
+  overfilled: boolean;
 }
 
 /** The glass beaker: slightly tapered wall, base, rim and measuring lines. */
@@ -98,8 +106,8 @@ function Liquid({ color, fill }: { color: string; fill: number }) {
   );
 }
 
-/** A handful of bubbles drifting up through the liquid. */
-function Bubbles({ fill }: { fill: number }) {
+/** Bubbles drifting up through the liquid — gentle when cool, vigorous when boiling. */
+function Bubbles({ fill, temperature }: { fill: number; temperature: number }) {
   const meshes = useRef<(THREE.Mesh | null)[]>([]);
   const seeds = useMemo(
     () =>
@@ -116,12 +124,15 @@ function Bubbles({ fill }: { fill: number }) {
   useFrame((state) => {
     const t = state.clock.elapsedTime;
     const top = Math.max(0.12, fill * MAX_LIQUID_HEIGHT - 0.12);
+    const boil = 0.5 + temperature * 2.6; // rise speed scales with heat
+    const size = 1 + temperature * 0.7;
     seeds.forEach((s, i) => {
       const m = meshes.current[i];
       if (!m) return;
       m.visible = fill > 0.05;
-      const y = LIQUID_BOTTOM + 0.05 + ((t * s.speed + s.phase) % 1) * top;
+      const y = LIQUID_BOTTOM + 0.05 + ((t * s.speed * boil + s.phase) % 1) * top;
       m.position.set(s.x, y, s.z);
+      m.scale.setScalar(size);
     });
   });
 
@@ -429,6 +440,193 @@ function ReactionFx({ seq, kind }: { seq: number; kind: ReactionKind | null }) {
 }
 
 /** Full 3D laboratory scene: bench, glass beaker, liquid and the formed product. */
+/** The burner rig under the vessel: a tripod stand plus flickering flames when on. */
+function HeaterRig({ heating, temperature }: { heating: boolean; temperature: number }) {
+  const flames = useRef<(THREE.Mesh | null)[]>([]);
+  const glowRef = useRef<THREE.Mesh>(null);
+  const seeds = useMemo(
+    () =>
+      Array.from({ length: 7 }, (_, i) => ({
+        a: (i / 7) * Math.PI * 2,
+        r: 0.1 + (i % 3) * 0.06,
+        phase: i * 0.8,
+      })),
+    [],
+  );
+
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    const on = heating && temperature > 0.02;
+    const intensity = heating ? 0.4 + 0.6 * temperature : 0;
+    seeds.forEach((s, i) => {
+      const m = flames.current[i];
+      if (!m) return;
+      m.visible = on;
+      const flick = 0.75 + 0.25 * Math.sin(t * 14 + s.phase);
+      m.scale.set(1, (0.55 + 0.7 * intensity) * flick, 1);
+    });
+    if (glowRef.current) {
+      glowRef.current.visible = on;
+      (glowRef.current.material as THREE.MeshBasicMaterial).opacity = 0.3 * intensity;
+    }
+  });
+
+  return (
+    <group>
+      {/* Tripod ring the beaker rests on */}
+      <mesh position={[0, STAND_H - 0.02, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.68, 0.025, 8, 36]} />
+        <meshStandardMaterial color="#3a3f47" roughness={0.5} metalness={0.6} />
+      </mesh>
+      {[0, 1, 2].map((i) => {
+        const a = (i / 3) * Math.PI * 2;
+        return (
+          <mesh key={i} position={[Math.cos(a) * 0.6, STAND_H / 2, Math.sin(a) * 0.6]}>
+            <cylinderGeometry args={[0.02, 0.02, STAND_H, 8]} />
+            <meshStandardMaterial color="#33373e" roughness={0.5} metalness={0.6} />
+          </mesh>
+        );
+      })}
+      {/* Burner base */}
+      <mesh position={[0, 0.05, 0]}>
+        <cylinderGeometry args={[0.2, 0.26, 0.1, 20]} />
+        <meshStandardMaterial color="#2b2f36" roughness={0.5} metalness={0.6} />
+      </mesh>
+      {/* Hot glow under the beaker */}
+      <mesh ref={glowRef} position={[0, STAND_H - 0.05, 0]}>
+        <cylinderGeometry args={[0.5, 0.5, 0.01, 24]} />
+        <meshBasicMaterial color="#ff7a1a" transparent opacity={0} toneMapped={false} />
+      </mesh>
+      {/* Flames */}
+      {seeds.map((s, i) => (
+        <mesh
+          key={i}
+          position={[Math.cos(s.a) * s.r, 0.16, Math.sin(s.a) * s.r]}
+          ref={(el) => {
+            flames.current[i] = el;
+          }}
+        >
+          <coneGeometry args={[0.06, 0.4, 8]} />
+          <meshBasicMaterial
+            color={i % 2 ? "#ffb52e" : "#ff7a1e"}
+            transparent
+            opacity={0.85}
+            toneMapped={false}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+/** Wisps of steam rising from the hot liquid's surface (only when there's liquid). */
+function Steam({ temperature, fill }: { temperature: number; fill: number }) {
+  const puffs = useRef<(THREE.Mesh | null)[]>([]);
+  const seeds = useMemo(
+    () =>
+      Array.from({ length: 6 }, (_, i) => ({
+        x: ((i % 3) - 1) * 0.18,
+        z: (((i + 1) % 3) - 1) * 0.16,
+        phase: i / 6,
+        speed: 0.16 + 0.04 * (i % 3),
+      })),
+    [],
+  );
+
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    const show = temperature > 0.5 && fill > 0.05;
+    const surface = LIQUID_BOTTOM + fill * MAX_LIQUID_HEIGHT;
+    seeds.forEach((s, i) => {
+      const m = puffs.current[i];
+      if (!m) return;
+      m.visible = show;
+      const lp = (t * s.speed + s.phase) % 1;
+      m.position.set(s.x * (1 + lp), surface + 0.05 + lp * 1.0, s.z * (1 + lp));
+      m.scale.setScalar(0.1 + lp * 0.28);
+      (m.material as THREE.MeshBasicMaterial).opacity = Math.max(
+        0,
+        0.3 * (1 - lp) * ((temperature - 0.5) / 0.5),
+      );
+    });
+  });
+
+  return (
+    <group>
+      {seeds.map((_s, i) => (
+        <mesh
+          key={i}
+          ref={(el) => {
+            puffs.current[i] = el;
+          }}
+        >
+          <sphereGeometry args={[1, 8, 8]} />
+          <meshBasicMaterial color="#ffffff" transparent opacity={0} depthWrite={false} toneMapped={false} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+/** Liquid spilling over the rim and pooling on the bench when overfilled. */
+function Overflow({ color, active }: { color: string; active: boolean }) {
+  const RIM_Y = BEAKER_HEIGHT + STAND_H;
+  const RIM_R = 0.72;
+  const streams = useRef<(THREE.Mesh | null)[]>([]);
+  const puddleRef = useRef<THREE.Mesh>(null);
+  const grow = useRef(0);
+  const seeds = useMemo(
+    () => Array.from({ length: 5 }, (_, i) => ({ a: (i / 5) * Math.PI * 2 + 0.3 })),
+    [],
+  );
+
+  useFrame((_, delta) => {
+    grow.current += ((active ? 1 : 0) - grow.current) * Math.min(1, delta * 1.5);
+    const g = grow.current;
+    streams.current.forEach((m) => {
+      if (!m) return;
+      m.visible = g > 0.04;
+      const mat = m.material as THREE.MeshStandardMaterial;
+      mat.color.set(color);
+      mat.opacity = 0.85 * g;
+    });
+    const p = puddleRef.current;
+    if (p) {
+      p.visible = g > 0.04;
+      const s = 0.3 + g * 1.0;
+      p.scale.set(s, s, 1);
+      const mat = p.material as THREE.MeshStandardMaterial;
+      mat.color.set(color);
+      mat.opacity = 0.55 * g;
+    }
+  });
+
+  return (
+    <group>
+      {seeds.map((s, i) => {
+        const x = Math.cos(s.a) * RIM_R;
+        const z = Math.sin(s.a) * RIM_R;
+        return (
+          <mesh
+            key={i}
+            position={[x, RIM_Y / 2, z]}
+            ref={(el) => {
+              streams.current[i] = el;
+            }}
+          >
+            <cylinderGeometry args={[0.03, 0.055, RIM_Y, 8]} />
+            <meshStandardMaterial color={color} transparent opacity={0} depthWrite={false} roughness={0.2} />
+          </mesh>
+        );
+      })}
+      <mesh ref={puddleRef} position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[1, 32]} />
+        <meshStandardMaterial color={color} transparent opacity={0} roughness={0.3} />
+      </mesh>
+    </group>
+  );
+}
+
 export function LabScene({
   liquidColor,
   fill,
@@ -437,9 +635,12 @@ export function LabScene({
   pourState,
   reactionSeq,
   reactionKind,
+  heating,
+  temperature,
+  overfilled,
 }: LabSceneProps) {
   return (
-    <Canvas dpr={[1, 2]} camera={{ position: [0, 1.6, 4.8], fov: 42 }} shadows>
+    <Canvas dpr={[1, 2]} camera={{ position: [0, 1.95, 5.1], fov: 42 }} shadows>
       <color attach="background" args={["#eef5fb"]} />
       <fog attach="fog" args={["#eef5fb", 9, 16]} />
       <ambientLight intensity={0.85} />
@@ -453,21 +654,31 @@ export function LabScene({
         <meshStandardMaterial color="#dce8f3" roughness={0.85} metalness={0.02} />
       </mesh>
 
-      <Beaker />
-      <Liquid color={liquidColor} fill={fill} />
-      <Bubbles fill={fill} />
-      <Pour color={pourColor} seq={pourSeq} state={pourState} />
-      <ReactionFx seq={reactionSeq} kind={reactionKind} />
+      {/* Burner rig under the beaker */}
+      <HeaterRig heating={heating} temperature={temperature} />
+
+      {/* The beaker and its contents sit on the tripod */}
+      <group position={[0, STAND_H, 0]}>
+        <Beaker />
+        <Liquid color={liquidColor} fill={fill} />
+        <Bubbles fill={fill} temperature={temperature} />
+        <Steam temperature={temperature} fill={fill} />
+        <Pour color={pourColor} seq={pourSeq} state={pourState} />
+        <ReactionFx seq={reactionSeq} kind={reactionKind} />
+      </group>
+
+      {/* Spill-over onto the bench when overfilled */}
+      <Overflow color={liquidColor} active={overfilled} />
 
       <OrbitControls
         makeDefault
         enableDamping
         enablePan={false}
         minDistance={3}
-        maxDistance={8}
+        maxDistance={8.5}
         minPolarAngle={0.5}
         maxPolarAngle={Math.PI / 2.1}
-        target={[0, 0.95, 0]}
+        target={[0, 1.25, 0]}
       />
     </Canvas>
   );
